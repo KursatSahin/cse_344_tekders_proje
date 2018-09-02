@@ -6,3 +6,5 @@
 #define TEKDERS_UDPCLIENT_H
 
 #endif //TEKDERS_UDPCLIENT_H
+
+void checkUsage(int argc, char *argv[]);

@@ -8,3 +8,7 @@
 #endif //TEKDERS_UDPCLIENT_H
 
 void checkUsage(int argc, char *argv[]);
+
+void INThandler(int sig);
+
+void *readServerThread(void *arg);

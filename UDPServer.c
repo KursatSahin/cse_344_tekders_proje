@@ -100,6 +100,7 @@ int main() {
             handle_error_en(status, "pthread_create");
         }
         vector_add(&thread_vector, thread);
+        sleep(6);
     }
 
     return 0;
@@ -107,6 +108,7 @@ int main() {
 
 void INThandler(int sig) {
     signal(sig, SIG_IGN);
+    fprintf(stderr,"Server terminated..\n");
     close(sockfd);
     for (int i = 0; i < vector_get_size(&thread_vector); ++i) {
         pthread_t *currentThread = vector_get(&thread_vector, i);

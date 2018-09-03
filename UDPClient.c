@@ -21,6 +21,7 @@
 int sockfd;
 time_t limit_time;
 int timeout;
+int client_id = -1;
 
 // Driver code
 int main(int argc, char *argv[]) {
@@ -28,6 +29,8 @@ int main(int argc, char *argv[]) {
 
     // Signal handler
     signal(SIGINT, INThandler);
+    signal(SIGTERM, INThandler);
+    signal(SIGHUP, INThandler);
 
     checkUsage(argc,argv);
 
@@ -40,6 +43,55 @@ int main(int argc, char *argv[]) {
     strcpy(hostname_of_server,argv[1]);
     server_udp_port = atoi(argv[2]);
     timeout = atoi(argv[3]);
+
+
+    struct sockaddr_in servaddr;
+    socklen_t slen = sizeof(servaddr);
+
+
+    // Creating socket file descriptor
+    if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+        perror("socket creation failed");
+        exit(EXIT_FAILURE);
+    }
+
+    memset(&servaddr, 0, slen);
+
+    // Filling server information
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_port = htons(PORT);
+    servaddr.sin_addr.s_addr = INADDR_ANY;
+
+    //socklen_t len;
+    ssize_t recv_len;
+    ssize_t send_len;
+
+    // Create request and response object
+    request_t request = {0};
+    response_t response;
+
+
+    // Initialize client_id
+    // Send new client request
+    request.client_id = client_id;
+    send_len = sendto(sockfd, (request_t *) &request, sizeof(request_t),
+                      0, (const struct sockaddr *) &servaddr,
+                      slen);
+
+    if (send_len == -1) {
+        perror("sendto()");
+    }
+
+    // Recieve client_id from server
+    recv_len = recvfrom(sockfd, &response, sizeof(response_t),
+                        0, (struct sockaddr *) &servaddr,
+                        &slen);
+    if (recv_len == -1) {
+        handle_error_en(recv_len,"recvfrom()");
+    }
+
+    client_id = response.client_id;
+    // End of getting client_id
 
     while (1){
         if (thread_id == 0){
@@ -62,9 +114,18 @@ int main(int argc, char *argv[]) {
 }
 
 void INThandler(int sig) {
-    signal(sig, SIG_IGN);
-    fprintf(stderr,"Client terminated.\n");
-    close(sockfd);
+    switch (sig) {
+        case SIGINT:
+        case SIGHUP:
+        case SIGTERM:
+            signal(sig, SIG_IGN);
+            fprintf(stderr,"Client terminated.\n");
+            close(sockfd);
+            break;
+        default:
+            break;
+    }
+
     exit(0);
 }
 
@@ -126,6 +187,7 @@ void *readServerThread(void *arg){
     //    printf("\nEnter service name : ");
     //    scanf("%s",promt_service_name);
 
+        request.client_id = client_id;
         request.sequence_number = rand() % 1000;
         strcpy(request.protocol_name, "udp");
         strcpy(request.service_name, "http");
@@ -144,6 +206,8 @@ void *readServerThread(void *arg){
         }
 
         printf("Request sent.\n");
+
+        //sleep(1);
 
         // Timeout init
         time_t current_time = time(NULL);
@@ -164,12 +228,13 @@ void *readServerThread(void *arg){
             if (response.sequence_number != request.sequence_number) {
                 printf("Sequence number mismatch!!\n");
                 debug_response(&response);
+                sleep(10);
             } else {
                 debug_response(&response);
                 break;
             }
 
         }
-        sleep(1);
+
     }
 }

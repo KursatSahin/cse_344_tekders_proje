@@ -17,6 +17,8 @@
 #define NAMESIZE 256
 #define ALIAS_SIZE 1024
 
+#define MAX_THREAD 10
+
 #define handle_error_en(en, msg) \
         do { errno = en; perror(msg); exit(EXIT_FAILURE); } while (0)
 
@@ -30,6 +32,7 @@ struct myService {
 } hostserv;
 
 typedef struct {
+    int client_id;
     int sequence_number;
     char protocol_name[NAMESIZE];
     char service_name[NAMESIZE];
@@ -42,6 +45,7 @@ typedef struct {
 } ext_request_t;
 
 typedef struct {
+    int client_id;
     int sequence_number;
     int port_number;
     char aliases[ALIAS_SIZE];

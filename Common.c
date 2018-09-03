@@ -7,6 +7,7 @@
 
 void debug_request(request_t *request) {
     fprintf(stderr, "=== Request Object Debug Information ===\n");
+    fprintf(stderr, "client id: %d\n", request->client_id);
     fprintf(stderr, "sequence number: %d\n", request->sequence_number);
     fprintf(stderr, "protocol name: %s\n", request->protocol_name);
     fprintf(stderr, "service name: %s\n", request->service_name);
@@ -14,6 +15,7 @@ void debug_request(request_t *request) {
 
 void debug_ext_request(ext_request_t *ext_request) {
     fprintf(stderr, "=== Ext Request Object Debug Information ===\n");
+    fprintf(stderr, "client id: %d\n", ext_request->request.client_id);
     fprintf(stderr, "sequence number: %d\n", ext_request->request.sequence_number);
     fprintf(stderr, "protocol name: %s\n", ext_request->request.protocol_name);
     fprintf(stderr, "service name: %s\n", ext_request->request.service_name);

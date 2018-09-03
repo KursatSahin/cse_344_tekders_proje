@@ -30,7 +30,7 @@ struct myService {
 
 typedef struct {
     int sequence_number;
-    char name[NAMESIZE];
+    char protocol_name[NAMESIZE];
     char service_name[NAMESIZE];
 } request_t;
 

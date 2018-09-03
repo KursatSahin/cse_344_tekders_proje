@@ -8,14 +8,14 @@
 void debug_request(request_t *request) {
     fprintf(stderr, "=== Request Object Debug Information ===\n");
     fprintf(stderr, "sequence number: %d\n", request->sequence_number);
-    fprintf(stderr, "name: %s\n", request->name);
+    fprintf(stderr, "protocol name: %s\n", request->protocol_name);
     fprintf(stderr, "service name: %s\n", request->service_name);
 }
 
 void debug_ext_request(ext_request_t *ext_request) {
     fprintf(stderr, "=== Ext Request Object Debug Information ===\n");
     fprintf(stderr, "sequence number: %d\n", ext_request->request.sequence_number);
-    fprintf(stderr, "name: %s\n", ext_request->request.name);
+    fprintf(stderr, "protocol name: %s\n", ext_request->request.protocol_name);
     fprintf(stderr, "service name: %s\n", ext_request->request.service_name);
     fprintf(stderr, "client address: %s\n", inet_ntoa(ext_request->cli_adr.sin_addr));
     fprintf(stderr, "client address len: %zd\n", ext_request->cli_adr_len);

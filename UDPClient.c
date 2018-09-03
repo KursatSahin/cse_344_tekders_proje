@@ -14,12 +14,15 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <time.h>
 #include "Common.h"
 
 // Driver code
 int main(int argc, char *argv[]) {
 
     checkUsage(argc,argv);
+
+    srand(time(NULL));
 
     // Parse cmd arguments
     char hostname_of_server[256];
@@ -61,7 +64,11 @@ int main(int argc, char *argv[]) {
     ssize_t send_len;
 
     // Create request and response object
-    request_t request = {80,"http","udp"};
+    request_t request = {0};
+    request.sequence_number = rand()%1000;
+    strcpy(request.protocol_name,promt_protocol);
+    strcpy(request.service_name,promt_service_name);
+
     response_t response;
     // End of create request and response object
 

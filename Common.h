@@ -6,7 +6,6 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <netinet/in.h>
-#include "ksnVector.h"
 
 #ifndef TEKDERS_COMMON_H
 #define TEKDERS_COMMON_H

@@ -31,6 +31,8 @@ pthread_mutex_t thread_count_lock;
 // Driver code
 int main() {
 
+    printf("\nServer started..\n");
+
     int client_count = 0;
     ssize_t send_len;
 
@@ -104,7 +106,7 @@ int main() {
     // TODO : while loop
     while (1) {
 
-        printf("\n\nWaiting for data...\n\n");
+        //printf("\nWaiting for data...\n");
 
         recv_len = recvfrom(sockfd, &request, sizeof(request_t), 0, (struct sockaddr *) &cliaddr, &slen);
         if (recv_len == -1) {
@@ -113,7 +115,7 @@ int main() {
         }
 
         // Display request
-        debug_request(&request);
+//        debug_request(&request);
 
         if (request.client_id == -1){ // If a new client
 
@@ -134,7 +136,8 @@ int main() {
             if (send_len == -1) {
                 handle_error_en(send_len, "sendto()");
             }
-            printf("\nGUI MSG SENT: %s\n",gui_msg);
+
+            printf("\nLog message sent gui\n");
             // End of send gui info
 
 
@@ -144,13 +147,10 @@ int main() {
             ext_request.cli_adr_len = slen;
 
             // Display extended request
-            debug_ext_request(&ext_request);
+//            debug_ext_request(&ext_request);
+            printf("\nRequest recieved from Client : %d \n",ext_request.request.client_id);
 
             //sleep(1);
-
-            //printf("vector size : %d\n",vector_get_size(&thread_vector));
-            printf("vector size : %d\n",thread_count);
-
 
             pthread_mutex_lock(&thread_count_lock);
             if (thread_count < MAX_THREAD) {
@@ -170,7 +170,7 @@ int main() {
                 //vector_add(&thread_vector, thread);
             } else {
                 //sleep(10);
-                fprintf(stderr,"Thread limit reached! Cannot serve any more requests\n");
+                fprintf(stderr,"\nThread limit reached! Cannot serve any more requests\n");
             }
 
             pthread_mutex_unlock(&thread_count_lock);
@@ -188,7 +188,7 @@ void INThandler(int sig) {
         case SIGHUP:
         case SIGTERM:
             signal(sig, SIG_IGN);
-            fprintf(stderr,"Server terminated..\n");
+            fprintf(stderr,"\nServer terminated..\n");
             close(sockfd);
             pthread_mutex_destroy(&thread_count_lock);
             /*for (int i = 0; i < vector_get_size(&thread_vector); ++i) {
@@ -208,33 +208,38 @@ void INThandler(int sig) {
 }
 
 void *thread_func(void *arg) {
-    sleep(5);
+    //sleep(10);
     ext_request_t *ext_request = (ext_request_t *) arg;
     ssize_t send_len;
     response_t response = {0};
 // Create servent variable and check service availability with getservbyname()
     struct servent *serv;
-    serv = getservbyname("http", "tcp");
+    serv = getservbyname(ext_request->request.service_name, ext_request->request.protocol_name);
 
     if (serv == NULL) {
         printf("Service not found\n");
+        response.sequence_number = ext_request->request.sequence_number;
+        response.port_number = -1;
+    } else {
+        // Create response via servent variable
+        response.sequence_number = ext_request->request.sequence_number;
+        response.port_number = serv->s_port;
+
+        int index = 0;
+        while(serv->s_aliases[index] != NULL){
+            strcat(response.aliases, serv->s_aliases[index]);
+            ++index;
+        }
     }
 
     // Display servent
     // debug_servent(serv);
 
-    // Create response via servent variable
-    response.sequence_number = ext_request->request.sequence_number;
-    response.port_number = serv->s_port;
 
-    int index = 0;
-    while(serv->s_aliases[index] != NULL){
-        strcat(response.aliases, serv->s_aliases[index]);
-        ++index;
-    }
 
     // Display response
-    debug_response(&response);
+//    debug_response(&response);
+    printf("\nResponse sent to Client : %d \n",ext_request->request.client_id);
 
     send_len = sendto(sockfd, &response, sizeof(response_t), 0, (const struct sockaddr *) &ext_request->cli_adr,
                       ext_request->cli_adr_len);

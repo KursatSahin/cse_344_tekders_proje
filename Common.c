@@ -6,7 +6,7 @@
 
 
 void debug_request(request_t *request) {
-    fprintf(stderr, "=== Request Object Debug Information ===\n");
+    fprintf(stderr, "\n=== Request Object Debug Information ===\n");
     fprintf(stderr, "client id: %d\n", request->client_id);
     fprintf(stderr, "sequence number: %d\n", request->sequence_number);
     fprintf(stderr, "protocol name: %s\n", request->protocol_name);
@@ -14,7 +14,7 @@ void debug_request(request_t *request) {
 }
 
 void debug_ext_request(ext_request_t *ext_request) {
-    fprintf(stderr, "=== Ext Request Object Debug Information ===\n");
+    fprintf(stderr, "\n=== Ext Request Object Debug Information ===\n");
     fprintf(stderr, "client id: %d\n", ext_request->request.client_id);
     fprintf(stderr, "sequence number: %d\n", ext_request->request.sequence_number);
     fprintf(stderr, "protocol name: %s\n", ext_request->request.protocol_name);
@@ -24,14 +24,14 @@ void debug_ext_request(ext_request_t *ext_request) {
 }
 
 void debug_response(response_t *response) {
-    fprintf(stderr, "=== Response Object Debug Information ===\n");
+    fprintf(stderr, "\n=== Response Object Debug Information ===\n");
     fprintf(stderr, "sequence no: %d\n", response->sequence_number);
     fprintf(stderr, "port no: %d\n", response->port_number);
     fprintf(stderr, "aliases: %s\n", response->aliases);
 }
 
 void debug_servent(struct servent *serv) {
-    fprintf(stderr, "=== Servent Object Debug Information ===\n");
+    fprintf(stderr, "\n=== Servent Object Debug Information ===\n");
     fprintf(stderr, "Name: %-15s  Port: %5d    Protocol: %-6s\n,   Aliases: %-40s\n", serv->s_name, ntohs(serv->s_port),
             serv->s_proto, serv->s_aliases[0]);
 

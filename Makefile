@@ -1,3 +1,11 @@
+# Personal informations for creating submitting format
+AUTHOR_NAME 	= ali_kursat
+AUTHOR_SURNAME	= sahin
+COURSE_ID 	= CSE344
+STD_ID		= 091044038
+HW_ID		= tek_ders
+ARCH_FILE_EXT	= .tar.gz
+
 all: client server
 
 CC = gcc
@@ -24,3 +32,6 @@ server:
 
 clean:
 	-rm -f *.o core *.core $(EXECUTABLE_SERVER) $(EXECUTABLE_CLIENT)
+
+zip:
+	tar -cvzf $(ARCHIVE_PATH) $(CLIENT_C) $(SERVER_C) $(SOURCES) $(HEADERS)

@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
 
     // Filling server information
     servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(PORT);
+    servaddr.sin_port = htons(server_udp_port);
     servaddr.sin_addr.s_addr = INADDR_ANY;
 
     //socklen_t len;

@@ -24,7 +24,6 @@
 int sockfd;
 int sockfd_gui;
 
-vector thread_vector;
 int thread_count=0;
 pthread_mutex_t thread_count_lock;
 
@@ -46,8 +45,6 @@ int main() {
     socklen_t slen_gui = sizeof(servaddr_gui);
 
     int status;
-
-    vector_init(&thread_vector);
 
     // Creating socket file descriptor for clients
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -155,7 +152,6 @@ int main() {
             pthread_mutex_lock(&thread_count_lock);
             if (thread_count < MAX_THREAD) {
                 pthread_mutex_unlock(&thread_count_lock);
-//            if (vector_get_size(&thread_vector) < MAX_THREAD) {
                 pthread_t *thread = calloc(1, sizeof(pthread_t));
                 if (thread == NULL) {
                     handle_error("thread calloc failed");
@@ -167,7 +163,6 @@ int main() {
                 }
                 pthread_mutex_lock(&thread_count_lock);
                 ++thread_count;
-                //vector_add(&thread_vector, thread);
             } else {
                 //sleep(10);
                 fprintf(stderr,"\nThread limit reached! Cannot serve any more requests\n");
@@ -191,14 +186,6 @@ void INThandler(int sig) {
             fprintf(stderr,"\nServer terminated..\n");
             close(sockfd);
             pthread_mutex_destroy(&thread_count_lock);
-            /*for (int i = 0; i < vector_get_size(&thread_vector); ++i) {
-                pthread_t *currentThread = vector_get(&thread_vector, i);
-                int status = pthread_cancel(*currentThread);
-                if (status != 0) {
-                    printf("can't cancel a thread");
-                }
-            }
-            vector_free(&thread_vector);*/
             break;
         default:
             break;

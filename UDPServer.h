@@ -6,6 +6,6 @@
 #define TEKDERS_UDPSERVER_H
 
 void  INThandler(int sig);
-void *thread_func();
+void *thread_func(void *arg);
 
 #endif //TEKDERS_UDPSERVER_H

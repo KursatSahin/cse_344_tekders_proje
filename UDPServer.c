@@ -22,6 +22,8 @@
 
 // GLOBAL VARS
 int sockfd;
+int sockfd_gui;
+
 vector thread_vector;
 int thread_count=0;
 pthread_mutex_t thread_count_lock;
@@ -30,27 +32,30 @@ pthread_mutex_t thread_count_lock;
 int main() {
 
     int client_count = 0;
+    ssize_t send_len;
 
     if(pthread_mutex_init(&thread_count_lock,NULL) != 0){
         fprintf(stderr,"mutex init failed\n");
         exit(0);
     }
 
-    struct sockaddr_in servaddr, cliaddr;
+    struct sockaddr_in servaddr, servaddr_gui, cliaddr;
     socklen_t slen = sizeof(cliaddr);
+    socklen_t slen_gui = sizeof(servaddr_gui);
 
     int status;
 
     vector_init(&thread_vector);
 
-    // Creating socket file descriptor
+    // Creating socket file descriptor for clients
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-        perror("socket creation failed");
+        perror("server socket creation failed");
         exit(EXIT_FAILURE);
     }
 
     memset(&servaddr, 0, sizeof(servaddr));
     memset(&cliaddr, 0, slen);
+    memset(&servaddr_gui, 0, slen_gui);
 
     // Filling server information
     servaddr.sin_family = AF_INET; // IPv4
@@ -63,14 +68,30 @@ int main() {
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-/*
-    int llen=20;
-    char cliaddr[llen];
+    // End of creating socket file descriptor for clients
 
-    inet_ntop(AF_INET, &(cliaddr.sin_addr), cliaddr, llen);
-    printf("address:%s\n",cliaddr);
-*/
+    // Creating socket file descriptor for gui
+    if ((sockfd_gui = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+        perror("gui socket creation failed");
+        exit(EXIT_FAILURE);
+    }
 
+    memset(&servaddr_gui, 0, sizeof(servaddr_gui));
+
+    // Filling server information
+    servaddr_gui.sin_family = AF_INET; // IPv4
+    servaddr_gui.sin_addr.s_addr = INADDR_ANY;
+    servaddr_gui.sin_port = htons(GUI_PORT);
+
+//    // Bind the socket with the server address
+//    if (bind(sockfd_gui, (const struct sockaddr *) &servaddr_gui,
+//             sizeof(servaddr_gui)) < 0) {
+//        perror("bind failed");
+//        exit(EXIT_FAILURE);
+//    }
+    // End of creating socket file descriptor for gui
+
+    // Create and initialize request and ext_request
     ssize_t recv_len;
     request_t request = {0};
     ext_request_t ext_request = {0};
@@ -106,6 +127,17 @@ int main() {
                 handle_error_en(send_len, "sendto()");
             }
         } else { // If an old client
+            // Send gui info
+            char gui_msg[1024] = {0};
+            sprintf(gui_msg,"%d,%d,%s,%s",request.client_id,request.sequence_number,request.protocol_name,request.service_name);
+            send_len = sendto(sockfd_gui, &gui_msg, sizeof(gui_msg), 0, (const struct sockaddr *) &servaddr_gui, slen_gui);
+            if (send_len == -1) {
+                handle_error_en(send_len, "sendto()");
+            }
+            printf("\nGUI MSG SENT: %s\n",gui_msg);
+            // End of send gui info
+
+
             // Create extended request from request
             ext_request.request = request;
             ext_request.cli_adr = cliaddr;

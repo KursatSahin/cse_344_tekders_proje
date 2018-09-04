@@ -12,6 +12,7 @@
 #define TEKDERS_COMMON_H
 
 #define PORT     8081
+#define GUI_PORT 8082
 #define MAXLINE  1024
 
 #define NAMESIZE 256

@@ -1,4 +1,4 @@
-all: client server
+all: client server gui_server
 
 CC = gcc
 CFLAGS = -std=c11 -Wall -Wextra
@@ -6,11 +6,13 @@ HEADERS = Common.h ksnVector.h UDPClient.h UDPServer.h
 SOURCES = Common.c ksnVector.c
 CLIENT_C = UDPClient.c
 SERVER_C = UDPServer.c
+GUI_SERVER_C = GuiServer.c
 
 LIBS = -lpthread
 
 EXECUTABLE_CLIENT = clientApp
 EXECUTABLE_SERVER = serverApp
+EXECUTABLE_GUI = guiApp
 
 OBJS =  client.o server.o common.o ksnVector.o
 
@@ -21,6 +23,9 @@ client:
 
 server:
 	$(CC) $(SERVER_C) $(SOURCES) -o $(EXECUTABLE_SERVER) $(LIBS) $(CFLAGS)
+
+gui_server:
+	$(CC) $(GUI_SERVER_C) $(SOURCES) -o $(EXECUTABLE_GUI) $(LIBS) $(CFLAGS)
 
 clean:
 	-rm -f *.o core *.core $(EXECUTABLE_SERVER) $(EXECUTABLE_CLIENT)

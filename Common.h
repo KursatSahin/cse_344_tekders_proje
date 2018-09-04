@@ -2,9 +2,11 @@
 // Created by akursat on 01.09.2018.
 //
 
+#include <stdio.h>
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <errno.h>
+#include <stdbool.h>
 #include <netinet/in.h>
 
 #ifndef TEKDERS_COMMON_H

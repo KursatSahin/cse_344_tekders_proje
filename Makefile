@@ -14,6 +14,7 @@ HEADERS = Common.h UDPClient.h UDPServer.h
 SOURCES = Common.c
 CLIENT_C = UDPClient.c
 SERVER_C = UDPServer.c
+OTHER = Makefile tek_ders_proje_rapor.pdf udp-server-monitor-1.0-SNAPSHOT.jar udpservermonitor
 
 LIBS = -lpthread
 
@@ -34,4 +35,4 @@ clean:
 	-rm -f *.o core *.core $(EXECUTABLE_SERVER) $(EXECUTABLE_CLIENT)
 
 zip:
-	tar -cvzf $(ARCHIVE_PATH) $(CLIENT_C) $(SERVER_C) $(SOURCES) $(HEADERS)
+	tar -cvzf $(ARCHIVE_PATH) $(CLIENT_C) $(SERVER_C) $(SOURCES) $(HEADERS) $(OTHER) 
